@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
@@ -61,9 +62,15 @@
       margin: 0.5rem auto;
       font-size: 1rem;
     }
+    .sections {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
     .section {
       width: 100%;
-      max-width: 600px;
       margin-bottom: 2rem;
     }
     .section h2 {
@@ -105,6 +112,31 @@
       color: #fff;
       font-size: 0.875rem;
     }
+    /* PC版レスポンシブ */
+    @media (min-width: 768px) {
+      body {
+        padding: 2rem;
+      }
+      .controls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .controls > input {
+        flex: 1 1 200px;
+      }
+      #add-item {
+        align-self: flex-end;
+        margin: 0;
+      }
+      .sections {
+        flex-direction: row;
+      }
+      .section {
+        width: 50%;
+        margin-bottom: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -119,20 +151,21 @@
     <button id="add-item">追加</button>
   </div>
 
-  <section class="section">
-    <!-- idを付与 -->
-    <h2 id="pending-header">未購入リスト</h2>
-    <div class="box">
-      <ul id="pending-list"></ul>
-    </div>
-  </section>
+  <div class="sections">
+    <section class="section">
+      <h2 id="pending-header">未購入リスト</h2>
+      <div class="box">
+        <ul id="pending-list"></ul>
+      </div>
+    </section>
 
-  <section class="section">
-    <h2>購入済みリスト</h2>
-    <div class="box">
-      <ul id="done-list"></ul>
-    </div>
-  </section>
+    <section class="section">
+      <h2>購入済みリスト</h2>
+      <div class="box">
+        <ul id="done-list"></ul>
+      </div>
+    </section>
+  </div>
 
   <script>
     const pendingEl       = document.getElementById('pending-list');
@@ -147,16 +180,12 @@
 
     let list = JSON.parse(localStorage.getItem('shoppingList') || '[]');
 
-    // 未購入合計を計算して見出しと予算を更新
     function updateTotals() {
       const pendingSum = list
         .filter(i => !i.done)
         .reduce((acc, i) => acc + i.qty * i.price, 0);
       pendingHeaderEl.textContent = `未購入リスト（合計: ¥${pendingSum.toLocaleString()}）`;
-      const totalSum = list
-        .filter(i => !i.done)
-        .reduce((acc, i) => acc + i.qty * i.price, 0);
-      budgetEl.textContent = `必要予算: ¥${totalSum.toLocaleString()}`;
+      budgetEl.textContent = `必要予算: ¥${pendingSum.toLocaleString()}`;
     }
 
     function render() {
@@ -208,9 +237,7 @@
       saveAndRender();
     });
 
-    // 初期描画
     render();
   </script>
 </body>
 </html>
-
