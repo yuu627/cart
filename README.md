@@ -39,7 +39,7 @@
       flex-direction: column;
       gap: 0.5rem;
       width: 100%;
-      max-width: 600px;
+      max-width: 800px; /* PC時に横幅を広げる */
       margin-bottom: 1rem;
     }
     .controls > * {
@@ -63,7 +63,7 @@
     }
     .sections {
       width: 100%;
-      max-width: 1200px;
+      max-width: 1400px; /* PC時にリスト表示領域をさらに広げる */
       display: flex;
       flex-direction: column;
       gap: 2rem;
@@ -121,8 +121,13 @@
         flex-wrap: wrap;
         gap: 1rem;
       }
-      .controls > input {
-        flex: 1 1 200px;
+      /* 「買うもの」入力欄を他より大きく */
+      .controls > #item-name {
+        flex: 2 1 350px;
+      }
+      /* 他の入力欄幅 */
+      .controls > input:not(#item-name) {
+        flex: 1 1 180px;
       }
       #add-item {
         align-self: flex-end;
