@@ -10,12 +10,11 @@
       --bg: #ffffff;
       --fg: #333333;
       --card-bg: #f8f8f8;
-      --primary: #fff200;
-      --primary-hover: #ffd900;
+      --primary: #ffe100;
+      --primary-hover: #d5b500;
       --danger: #e74c3c;
       --danger-hover: #820101;
       --transition-speed: 0.3s;
-      --card-elevation: 4px;
     }
     /* ダークテーマ変数 */
     [data-theme="dark"] {
@@ -133,18 +132,10 @@
       grid-template-columns: 1fr auto auto;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      margin-bottom: 1rem;
-      background: var(--card-bg);
-      border-radius: 6px;
-      transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--fg);
     }
-    .box li:last-child { margin-bottom: 0; }
-    /* ホバーで浮かせる */
-    .box li:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 var(--card-elevation) calc(var(--card-elevation) * 2) rgba(0,0,0,0.2);
-    }
+    .box li:last-child { border-bottom: none; }
     .info { font-size: 0.875rem; line-height: 1.3; }
     .toggle {
       padding: 0.25rem 0.5rem;
@@ -165,8 +156,7 @@
       .controls > #item-name { flex: 2 1 350px; }
       .controls > input:not(#item-name) { flex: 1 1 180px; }
       #add-item { align-self: flex-end; margin: 0; }
-      .sections { flex-direction: row;
-      }
+      .sections { flex-direction: row; }
       .section { width: 50%; margin-bottom: 0; }
     }
   </style>
