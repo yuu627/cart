@@ -115,7 +115,7 @@
     <input type="text" id="item-name" placeholder="買うもの" />
     <input type="number" id="item-qty" placeholder="数量" min="1" />
     <input type="text" id="item-store" placeholder="どこで買える？" />
-    <input type="number" id="item-price" placeholder="価格（¥）" min="0" />
+    <input type="number" id="item-price" placeholder="単価（¥）" min="0" />
     <button id="add-item">追加</button>
   </div>
 
