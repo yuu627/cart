@@ -10,8 +10,10 @@
       --bg: #ffffff;
       --fg: #333333;
       --card-bg: #f8f8f8;
-      --primary: #f7de40;
+      --primary: #fff200;
+      --primary-hover: #ffd900;
       --danger: #e74c3c;
+      --danger-hover: #820101;
       --transition-speed: 0.3s;
     }
     /* ダークテーマ変数 */
@@ -19,6 +21,12 @@
       --bg: #2b2b2b;
       --fg: #e0e0e0;
       --card-bg: #3a3a3a;
+      /* テーマ切替ボタン: ライトモードへの変更(ダーク→ライト)ホバー color: yellow */
+      --toggle-hover-dark: #e7ca29;
+      --primary: #44b1f4;
+      --primary-hover: #004cbf;
+      --danger: #05317c;
+      --danger-hover: #020e41;
     }
     * {
       box-sizing: border-box;
@@ -42,22 +50,35 @@
       align-items: center;
       gap: 0.5rem;
     }
-    /* 絵文字切り替え */
     .emoji.light { display: inline; }
     .emoji.dark { display: none; }
     [data-theme="dark"] .emoji.light { display: none; }
     [data-theme="dark"] .emoji.dark { display: inline; }
-    /* テーマ切替ボタン */
-    #theme-toggle {
+    button {
       font-family: 'DotGothic16', sans-serif;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      transition: background var(--transition-speed), color var(--transition-speed);
+    }
+    #theme-toggle {
       margin-bottom: 1rem;
       padding: 0.25rem 0.75rem;
       background: var(--card-bg);
       border: 1px solid var(--fg);
-      border-radius: 4px;
-      cursor: pointer;
       color: var(--fg);
-      transition: background var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+    }
+    /* 共通: テーマ切替ボタン ホバー */
+    #theme-toggle:hover {
+      background: var(--primary-hover);
+    }
+    /* ライトモード時: ホバーを青に */
+    [data-theme="light"] #theme-toggle:hover {
+      background: #3498db;
+    }
+    /* ダークモード時: ホバーを黄色に */
+    [data-theme="dark"] #theme-toggle:hover {
+      background: var(--toggle-hover-dark);
     }
     .budget {
       font-size: 1.2rem;
@@ -75,23 +96,21 @@
     .controls > * {
       padding: 0.25rem 0.5rem;
       border: 1px solid var(--fg);
-      border-radius: 4px;
       background: var(--card-bg);
       color: var(--fg);
       font-size: 1rem;
-      transition: background var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
     }
     #add-item {
       padding: 0.5rem 1.5rem;
       background: var(--primary);
       color: #fff;
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
       display: block;
       margin: 0.5rem auto;
       font-size: 1rem;
-      transition: background var(--transition-speed), color var(--transition-speed);
+    }
+    #add-item:hover {
+      background: var(--primary-hover);
     }
     .sections {
       width: 100%;
@@ -106,8 +125,6 @@
       padding: 0.75rem;
       background: var(--card-bg);
       border-radius: 6px;
-      min-height: 2rem;
-      transition: background var(--transition-speed);
     }
     .box ul { list-style: none; padding: 0; margin: 0; }
     .box li {
@@ -117,27 +134,22 @@
       gap: 0.5rem;
       padding: 0.5rem 0;
       border-bottom: 1px solid var(--fg);
-      transition: border-color var(--transition-speed);
     }
     .box li:last-child { border-bottom: none; }
     .info { font-size: 0.875rem; line-height: 1.3; }
     .toggle {
       padding: 0.25rem 0.5rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
       background: var(--primary);
       color: #fff;
       font-size: 0.875rem;
-      transition: background var(--transition-speed);
     }
     .toggle.delete { background: var(--danger); }
-    /* ダークモード専用ボタン色 */
-    [data-theme="dark"] .toggle { background: #6aade3; }
-    [data-theme="dark"] .toggle.delete { background: #1515b0; }
-    /* ダークモード専用追加ボタン色 */
-    [data-theme="dark"] #add-item { background: #6aade3; color: #000; }
-    /* PC版レスポンシブ */
+    .toggle:hover {
+      background: var(--primary-hover);
+    }
+    .toggle.delete:hover {
+      background: var(--danger-hover);
+    }
     @media (min-width: 768px) {
       body { padding: 2rem; }
       .controls { flex-direction: row; flex-wrap: wrap; gap: 1rem; }
@@ -182,7 +194,6 @@
   <script>
     const root = document.documentElement;
     const themeToggle = document.getElementById('theme-toggle');
-    // 保存されたテーマを適用
     const savedTheme = localStorage.getItem('theme') || 'light';
     root.dataset.theme = savedTheme;
     themeToggle.textContent = savedTheme === 'light' ? 'ダークモード' : 'ライトモード';
@@ -193,7 +204,6 @@
       themeToggle.textContent = newTheme === 'light' ? 'ダークモード' : 'ライトモード';
     });
 
-    // 以下、既存の買い物リストロジック
     const pendingEl = document.getElementById('pending-list');
     const doneEl    = document.getElementById('done-list');
     const budgetEl  = document.getElementById('budget');
@@ -203,40 +213,27 @@
     const storeIn= document.getElementById('item-store');
     const priceIn= document.getElementById('item-price');
     const addBtn = document.getElementById('add-item');
-
     let list = JSON.parse(localStorage.getItem('shoppingList') || '[]');
-
     function updateTotals() {
-      const pendingSum = list.filter(i => !i.done)
-        .reduce((acc, i) => acc + i.qty * i.price, 0);
+      const pendingSum = list.filter(i => !i.done).reduce((acc, i) => acc + i.qty * i.price, 0);
       pendingHeaderEl.textContent = `未購入リスト（合計: ¥${pendingSum.toLocaleString()}）`;
       budgetEl.textContent = `必要予算: ¥${pendingSum.toLocaleString()}`;
     }
-
     function render() {
-      pendingEl.innerHTML = ''; 
-      doneEl.innerHTML    = '';
-
+      pendingEl.innerHTML = '';
+      doneEl.innerHTML = '';
       list.forEach((item, idx) => {
         const li = document.createElement('li');
         if (!item.done) {
           li.innerHTML = `
-            <div class="info">
-              <strong>${item.name}</strong> × ${item.qty}<br>
-              店舗: ${item.store} | 単価: ¥${item.price.toLocaleString()} | 小計: ¥${(item.qty*item.price).toLocaleString()}
-            </div>
+            <div class="info"><strong>${item.name}</strong> × ${item.qty}<br>店舗: ${item.store} | 単価: ¥${item.price.toLocaleString()} | 小計: ¥${(item.qty*item.price).toLocaleString()}</div>
             <button class="toggle">完了</button>
           `;
-          li.querySelector('button').addEventListener('click', () => {
-            list[idx].done = true; saveAndRender();
-          });
+          li.querySelector('button').addEventListener('click', () => { list[idx].done = true; saveAndRender(); });
           pendingEl.appendChild(li);
         } else {
           li.innerHTML = `
-            <div class="info">
-              <strong>${item.name}</strong> × ${item.qty}<br>
-              店舗: ${item.store} | 単価: ¥${item.price.toLocaleString()} | 小計: ¥${(item.qty*item.price).toLocaleString()}
-            </div>
+            <div class="info"><strong>${item.name}</strong> × ${item.qty}<br>店舗: ${item.store} | 単価: ¥${item.price.toLocaleString()} | 小計: ¥${(item.qty*item.price).toLocaleString()}</div>
             <button class="toggle" data-action="undo">未完了</button>
             <button class="toggle delete" data-action="delete">削除</button>
           `;
@@ -247,25 +244,12 @@
       });
       updateTotals();
     }
-
     function saveAndRender() { localStorage.setItem('shoppingList', JSON.stringify(list)); render(); }
-
     addBtn.addEventListener('click', () => {
-      const name  = nameIn.value.trim();
-      const qty   = parseInt(qtyIn.value, 10);
-      const store = storeIn.value.trim();
-      const price = parseInt(priceIn.value, 10);
-      if (!name || !qty || !store || !price) {
-        alert('すべての項目を正しく入力してください'); return;
-      }
-      list.push({ name, qty, store, price, done: false });
-      nameIn.value = '';
-      qtyIn.value   = '';
-      storeIn.value = '';
-      priceIn.value = '';
-      saveAndRender();
+      const name = nameIn.value.trim(); const qty = parseInt(qtyIn.value,10); const store = storeIn.value.trim(); const price = parseInt(priceIn.value,10);
+      if (!name||!qty||!store||!price) { alert('すべての項目を正しく入力してください'); return; }
+      list.push({name,qty,store,price,done:false}); nameIn.value=qtyIn.value=storeIn.value=priceIn.value=''; saveAndRender();
     });
-
     render();
   </script>
 </body>
