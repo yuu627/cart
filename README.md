@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ja" data-theme="light">
 <head>
   <meta charset="UTF-8" />
@@ -133,10 +134,10 @@
     }
     .toggle.delete { background: var(--danger); }
     /* ダークモード専用ボタン色 */
-    [data-theme="dark"] .toggle { background: #90caf9; }
-    [data-theme="dark"] .toggle.delete { background: #ef9a9a; }
+    [data-theme="dark"] .toggle { background: #6aade3; }
+    [data-theme="dark"] .toggle.delete { background: #1515b0; }
     /* ダークモード専用追加ボタン色 */
-    [data-theme="dark"] #add-item { background: #80cbc4; color: #000; }
+    [data-theme="dark"] #add-item { background: #6aade3; color: #000; }
     /* PC版レスポンシブ */
     @media (min-width: 768px) {
       body { padding: 2rem; }
@@ -152,10 +153,10 @@
 <body>
   <h1>
     <span class="emoji light">🐣</span>
-    <span class="emoji dark">🌙</span>
+    <span class="emoji dark">🐟</span>
     買い物リスト
     <span class="emoji light">🐣</span>
-    <span class="emoji dark">🌙</span>
+    <span class="emoji dark">🐟</span>
   </h1>
   <button id="theme-toggle">ダークモード</button>
   <div class="budget" id="budget">必要予算: ¥0</div>
